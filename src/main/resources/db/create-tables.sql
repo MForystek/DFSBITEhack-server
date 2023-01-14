@@ -3,13 +3,21 @@
 -- PostgreSQL version: 13.0
 -- Project Site: pgmodeler.io
 -- Model Author: ---
+-- object: "kgex-user" | type: ROLE --
+-- DROP ROLE IF EXISTS "kgex-user";
+CREATE ROLE "kgex-user" WITH 
+	CREATEDB
+	LOGIN;
+-- ddl-end --
+
 
 -- Database creation must be performed outside a multi lined SQL file. 
 -- These commands were put in this file only as a convenience.
 -- 
--- object: new_database | type: DATABASE --
--- DROP DATABASE IF EXISTS new_database;
-CREATE DATABASE new_database;
+-- object: "kgex-db" | type: DATABASE --
+-- DROP DATABASE IF EXISTS "kgex-db";
+CREATE DATABASE "kgex-db"
+	OWNER = "kgex-user";
 -- ddl-end --
 
 
@@ -67,8 +75,7 @@ ALTER TABLE public.users_tags OWNER TO postgres;
 CREATE TABLE public.verification_method_dict (
 	id serial NOT NULL,
 	method text NOT NULL,
-	CONSTRAINT verification_method_dict_pk PRIMARY KEY (id),
-	CONSTRAINT method_uq UNIQUE (method)
+	CONSTRAINT verification_method_dict_pk PRIMARY KEY (id)
 );
 -- ddl-end --
 ALTER TABLE public.verification_method_dict OWNER TO postgres;

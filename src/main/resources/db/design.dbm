@@ -3,14 +3,20 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="0,0" last-zoom="0.9" max-obj-count="4"
+<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="2,0" last-zoom="1" max-obj-count="4"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
 	 layer-name-colors="#000000"
 	 layer-rect-colors="#b4b4b4"
 	 show-layer-names="false" show-layer-rects="false">
-<database name="new_database" is-template="false" allow-conns="true">
+<role name="kgex-user"
+ createdb="true"
+ login="true">
+</role>
+
+<database name="kgex-db" is-template="false" allow-conns="true">
+	<role name="&quot;kgex-user&quot;"/>
 </database>
 
 <schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
@@ -133,7 +139,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="dicts"/>
-	<position x="580" y="580"/>
+	<position x="560" y="580"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -142,9 +148,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<constraint name="verification_method_dict_pk" type="pk-constr" table="public.verification_method_dict">
 		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="method_uq" type="uq-constr" table="public.verification_method_dict">
-		<columns names="method" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -174,7 +177,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="rel_users_tags_tags" type="relfk" layers="0"
 	 src-table="public.users_tags"
 	 dst-table="public.tags" reference-fk="tag_id_fk"
-	 src-required="false" dst-required="true"/>
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_users_verification_method_dict" type="relfk" layers="0"
 	 src-table="public.users"
