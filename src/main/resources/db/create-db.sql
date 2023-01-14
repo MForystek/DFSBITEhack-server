@@ -24,7 +24,10 @@ CREATE TABLE public.users (
 	verification_date date,
 	icon_path text,
 	verification_method_id int4,
-	CONSTRAINT user_pk PRIMARY KEY (id)
+	CONSTRAINT user_pk PRIMARY KEY (id),
+	CONSTRAINT login_uq UNIQUE (nick),
+	CONSTRAINT email_uq UNIQUE (email),
+	CONSTRAINT icon_path_uq UNIQUE (icon_path)
 );
 -- ddl-end --
 COMMENT ON COLUMN public.users.verification_date IS E'if null uesr is unverified';
@@ -39,7 +42,10 @@ ALTER TABLE public.users OWNER TO postgres;
 CREATE TABLE public.tags (
 	id serial NOT NULL,
 	tag text NOT NULL,
-	CONSTRAINT tags_pk PRIMARY KEY (id)
+	super_tag_id int4,
+	level int2 NOT NULL,
+	CONSTRAINT tags_pk PRIMARY KEY (id),
+	CONSTRAINT tag_uq UNIQUE (tag)
 );
 -- ddl-end --
 ALTER TABLE public.tags OWNER TO postgres;
@@ -49,8 +55,8 @@ ALTER TABLE public.tags OWNER TO postgres;
 -- DROP TABLE IF EXISTS public.users_tags CASCADE;
 CREATE TABLE public.users_tags (
 	user_id int4 NOT NULL,
-	tag_id int4 NOT NULL
-
+	tag_id int4 NOT NULL,
+	CONSTRAINT users_tags_pk PRIMARY KEY (user_id,tag_id)
 );
 -- ddl-end --
 ALTER TABLE public.users_tags OWNER TO postgres;
@@ -61,7 +67,8 @@ ALTER TABLE public.users_tags OWNER TO postgres;
 CREATE TABLE public.verification_method_dict (
 	id serial NOT NULL,
 	method text NOT NULL,
-	CONSTRAINT verification_method_dict_pk PRIMARY KEY (id)
+	CONSTRAINT verification_method_dict_pk PRIMARY KEY (id),
+	CONSTRAINT method_uq UNIQUE (method)
 );
 -- ddl-end --
 ALTER TABLE public.verification_method_dict OWNER TO postgres;
