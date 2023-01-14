@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RESOURCES_DIR="src/main/resources/db"
+RESOURCES_DIR="database"
 DESIGN_PATH="$RESOURCES_DIR/design.dbm"
 CREATE_TABLES_SQL="$RESOURCES_DIR/create-tables.sql"
 DESIGN_PNG="$RESOURCES_DIR/db-design.png"

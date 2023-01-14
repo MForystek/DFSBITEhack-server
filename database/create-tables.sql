@@ -81,17 +81,6 @@ CREATE TABLE public.verification_method_dict (
 ALTER TABLE public.verification_method_dict OWNER TO postgres;
 -- ddl-end --
 
--- object: public.roles | type: TABLE --
--- DROP TABLE IF EXISTS public.roles CASCADE;
-CREATE TABLE public.roles (
-	id serial,
-	name varchar NOT NULL
-
-);
--- ddl-end --
-ALTER TABLE public.roles OWNER TO postgres;
--- ddl-end --
-
 -- object: public.user_roles | type: TABLE --
 -- DROP TABLE IF EXISTS public.user_roles CASCADE;
 CREATE TABLE public.user_roles (
@@ -101,6 +90,18 @@ CREATE TABLE public.user_roles (
 );
 -- ddl-end --
 ALTER TABLE public.user_roles OWNER TO postgres;
+-- ddl-end --
+
+-- object: public.roles | type: TABLE --
+-- DROP TABLE IF EXISTS public.roles CASCADE;
+CREATE TABLE public.roles (
+	id serial NOT NULL,
+	name text,
+	CONSTRAINT name_uq UNIQUE (name),
+	CONSTRAINT roles_pk PRIMARY KEY (id)
+);
+-- ddl-end --
+ALTER TABLE public.roles OWNER TO postgres;
 -- ddl-end --
 
 -- object: verification_method_fk | type: CONSTRAINT --
