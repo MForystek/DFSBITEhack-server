@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="2,0" last-zoom="1" max-obj-count="4"
+<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="1,0" last-zoom="1" max-obj-count="7"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
@@ -53,11 +53,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="first_class_data"/>
-	<position x="580" y="200"/>
+	<position x="580" y="180"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="nick" not-null="true">
+	<column name="username" not-null="true">
 		<type name="text" length="0"/>
 	</column>
 	<column name="password" not-null="true">
@@ -66,10 +66,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="email" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="creation_date" not-null="true">
+	<column name="creation_at">
 		<type name="date" length="0"/>
 	</column>
-	<column name="verification_date">
+	<column name="verification_at">
 		<type name="date" length="0"/>
 		<comment><![CDATA[if null uesr is unverified]]></comment>
 	</column>
@@ -84,7 +84,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="login_uq" type="uq-constr" table="public.users">
-		<columns names="nick" ref-type="src-columns"/>
+		<columns names="username" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="email_uq" type="uq-constr" table="public.users">
 		<columns names="email" ref-type="src-columns"/>
@@ -151,6 +151,33 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
+<table name="roles" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="200" y="400"/>
+	<column name="id">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="0"/>
+	</column>
+</table>
+
+<table name="user_roles" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="180" y="160"/>
+	<column name="user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="role_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="user_roles_pk" type="pk-constr" table="public.user_roles">
+		<columns names="user_id,role_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
 <constraint name="verification_method_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="CASCADE" del-action="SET NULL" ref-table="public.verification_method_dict" table="public.users">
 	<columns names="verification_method_id" ref-type="src-columns"/>
@@ -166,6 +193,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <constraint name="tag_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.tags" table="public.users_tags">
 	<columns names="tag_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.user_roles">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="role_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.roles" table="public.user_roles">
+	<columns names="role_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -187,5 +226,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="public.users"
 	 dst-table="public.verification_method_dict" reference-fk="verification_method_fk"
 	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_roles_users" type="relfk" layers="0"
+	 src-table="public.user_roles"
+	 dst-table="public.users" reference-fk="user_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_user_roles_roles" type="relfk" layers="0"
+	 src-table="public.user_roles"
+	 dst-table="public.roles" reference-fk="role_id_fk"
+	 src-required="false" dst-required="true"/>
 
 </dbmodel>
