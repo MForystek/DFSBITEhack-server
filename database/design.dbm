@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="12"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<role name="kgex-user"
+ createdb="true"
+ login="true">
+</role>
+
+<database name="kgex-db" is-template="false" allow-conns="true">
+	<role name="&quot;kgex-user&quot;"/>
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<tag name="first_class_data">
+	<style id="table-body" colors="#fcfcfc,#fcfcfc,#808080"/>
+	<style id="table-ext-body" colors="#fcfcfc,#fcfcfc,#808080"/>
+	<style id="table-name" colors="#000000"/>
+	<style id="table-schema-name" colors="#000000"/>
+	<style id="table-title" colors="#ff0206,#4aa5ff,#20486f"/>
+	<style id="table-toggler-body" colors="#000000,#000000,#000000"/>
+	<style id="table-toggler-btns" colors="#000000,#000000,#000000"/>
+</tag>
+<tag name="dicts">
+	<style id="table-body" colors="#fcfcfc,#fcfcfc,#808080"/>
+	<style id="table-ext-body" colors="#fcfcfc,#fcfcfc,#808080"/>
+	<style id="table-name" colors="#000000"/>
+	<style id="table-schema-name" colors="#000000"/>
+	<style id="table-title" colors="#2cff0c,#4aa5ff,#20486f"/>
+	<style id="table-toggler-body" colors="#000000,#000000,#000000"/>
+	<style id="table-toggler-btns" colors="#000000,#000000,#000000"/>
+</tag>
+<tag name="connection-tables">
+	<style id="table-body" colors="#fcfcfc,#fcfcfc,#808080"/>
+	<style id="table-ext-body" colors="#fcfcfc,#fcfcfc,#808080"/>
+	<style id="table-name" colors="#000000"/>
+	<style id="table-schema-name" colors="#000000"/>
+	<style id="table-title" colors="#4f87ff,#4aa5ff,#20486f"/>
+	<style id="table-toggler-body" colors="#000000,#000000,#000000"/>
+	<style id="table-toggler-btns" colors="#000000,#000000,#000000"/>
+</tag>
+<table name="users" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<tag name="first_class_data"/>
+	<position x="580" y="320"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="password" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="email" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="creation_at" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="verification_at">
+		<type name="timestamp" length="0"/>
+		<comment><![CDATA[if null uesr is unverified]]></comment>
+	</column>
+	<column name="icon_path">
+		<type name="text" length="0"/>
+		<comment><![CDATA[path]]></comment>
+	</column>
+	<column name="verification_method_id">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="user_pk" type="pk-constr" table="public.users">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="login_uq" type="uq-constr" table="public.users">
+		<columns names="username" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="email_uq" type="uq-constr" table="public.users">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="icon_path_uq" type="uq-constr" table="public.users">
+		<columns names="icon_path" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="tags" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<tag name="first_class_data"/>
+	<position x="940" y="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="super_tag_id">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="level" not-null="true">
+		<type name="int2" length="0"/>
+	</column>
+	<constraint name="tags_pk" type="pk-constr" table="public.tags">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tag_uq" type="uq-constr" table="public.tags">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="users_tags_teach" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<tag name="connection-tables"/>
+	<position x="600" y="60"/>
+	<column name="user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="tag_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="users_tags_pk" type="pk-constr" table="public.users_tags_teach">
+		<columns names="user_id,tag_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="verification_method_dict" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<tag name="dicts"/>
+	<position x="560" y="700"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="method" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="verification_method_dict_pk" type="pk-constr" table="public.verification_method_dict">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="user_roles" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="240" y="60"/>
+	<column name="user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="role_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="user_roles_pk" type="pk-constr" table="public.user_roles">
+		<columns names="user_id,role_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="roles" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<tag name="first_class_data"/>
+	<position x="240" y="360"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="name">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="name_uq" type="uq-constr" table="public.roles">
+		<columns names="name" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="roles_pk" type="pk-constr" table="public.roles">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="chat_message" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<tag name="first_class_data"/>
+	<position x="1380" y="440"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="message" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="time" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="chat_session_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="to_user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="chat_pk" type="pk-constr" table="public.chat_message">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="chat_session" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1040" y="540"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="l_user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="o_user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="chat_session_pk" type="pk-constr" table="public.chat_session">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="users_tags_learn" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1020" y="300"/>
+	<column name="user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="tag_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="t_uq" type="pk-constr" table="public.users_tags_learn">
+		<columns names="user_id,tag_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="verification_method_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="SET NULL" ref-table="public.verification_method_dict" table="public.users">
+	<columns names="verification_method_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.users_tags_teach">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="tag_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.tags" table="public.users_tags_teach">
+	<columns names="tag_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.user_roles">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="role_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.roles" table="public.user_roles">
+	<columns names="role_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="chat_session_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.chat_session" table="public.chat_message">
+	<columns names="chat_session_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="l_user_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.users" table="public.chat_session">
+	<columns names="l_user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="o_user_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.users" table="public.chat_session">
+	<columns names="o_user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.users_tags_learn">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="tag_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.tags" table="public.users_tags_learn">
+	<columns names="tag_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_users_tags_users" type="relfk" layers="0"
+	 src-table="public.users_tags_teach"
+	 dst-table="public.users" reference-fk="user_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_users_tags_tags" type="relfk" layers="0"
+	 src-table="public.users_tags_teach"
+	 dst-table="public.tags" reference-fk="tag_id_fk"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="rel_users_verification_method_dict" type="relfk" layers="0"
+	 src-table="public.users"
+	 dst-table="public.verification_method_dict" reference-fk="verification_method_fk"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_user_roles_users" type="relfk" layers="0"
+	 src-table="public.user_roles"
+	 dst-table="public.users" reference-fk="user_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_user_roles_roles" type="relfk" layers="0"
+	 src-table="public.user_roles"
+	 dst-table="public.roles" reference-fk="role_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_chat_session_users" type="relfk" layers="0"
+	 src-table="public.chat_session"
+	 dst-table="public.users" reference-fk="l_user_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_chat_session_users1" type="relfk" layers="0"
+	 src-table="public.chat_session"
+	 dst-table="public.users" reference-fk="o_user_id"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_chat_message_chat_session" type="relfk" layers="0"
+	 src-table="public.chat_message"
+	 dst-table="public.chat_session" reference-fk="chat_session_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_user_tags_learn_users" type="relfk" layers="0"
+	 src-table="public.users_tags_learn"
+	 dst-table="public.users" reference-fk="user_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_user_tags_learn_tags" type="relfk" layers="0"
+	 src-table="public.users_tags_learn"
+	 dst-table="public.tags" reference-fk="tag_id_fk"
+	 src-required="false" dst-required="true"/>
+
+</dbmodel>
