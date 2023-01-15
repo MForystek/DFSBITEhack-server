@@ -22,12 +22,12 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String tag;
+    private String name;
     private Long super_tag_id;
     private int level;
 
-    public Tag(String tag, Long super_tag_id, int level) {
-        this.tag = tag;
+    public Tag(String name, Long super_tag_id, int level) {
+        this.name = name;
         this.super_tag_id = super_tag_id;
         this.level = level;
     }

@@ -49,25 +49,25 @@ ALTER TABLE public.users OWNER TO postgres;
 -- DROP TABLE IF EXISTS public.tags CASCADE;
 CREATE TABLE public.tags (
 	id serial NOT NULL,
-	tag text NOT NULL,
+	name text NOT NULL,
 	super_tag_id int4,
 	level int2 NOT NULL,
 	CONSTRAINT tags_pk PRIMARY KEY (id),
-	CONSTRAINT tag_uq UNIQUE (tag)
+	CONSTRAINT tag_uq UNIQUE (name)
 );
 -- ddl-end --
 ALTER TABLE public.tags OWNER TO postgres;
 -- ddl-end --
 
--- object: public.users_tags | type: TABLE --
--- DROP TABLE IF EXISTS public.users_tags CASCADE;
-CREATE TABLE public.users_tags (
+-- object: public.users_tags_teach | type: TABLE --
+-- DROP TABLE IF EXISTS public.users_tags_teach CASCADE;
+CREATE TABLE public.users_tags_teach (
 	user_id int4 NOT NULL,
 	tag_id int4 NOT NULL,
 	CONSTRAINT users_tags_pk PRIMARY KEY (user_id,tag_id)
 );
 -- ddl-end --
-ALTER TABLE public.users_tags OWNER TO postgres;
+ALTER TABLE public.users_tags_teach OWNER TO postgres;
 -- ddl-end --
 
 -- object: public.verification_method_dict | type: TABLE --
@@ -110,22 +110,35 @@ CREATE TABLE public.chat_message (
 	id serial NOT NULL,
 	message text NOT NULL,
 	"time" timestamp NOT NULL,
-	chat_group_id int4 NOT NULL,
+	chat_session_id int4 NOT NULL,
+	to_user_id int4 NOT NULL,
 	CONSTRAINT chat_pk PRIMARY KEY (id)
 );
 -- ddl-end --
 ALTER TABLE public.chat_message OWNER TO postgres;
 -- ddl-end --
 
--- object: public.chat_group | type: TABLE --
--- DROP TABLE IF EXISTS public.chat_group CASCADE;
-CREATE TABLE public.chat_group (
-	id int4 NOT NULL,
-	user_id int4 NOT NULL,
-	CONSTRAINT chat_group_pk PRIMARY KEY (id,user_id)
+-- object: public.chat_session | type: TABLE --
+-- DROP TABLE IF EXISTS public.chat_session CASCADE;
+CREATE TABLE public.chat_session (
+	id serial NOT NULL,
+	l_user_id int4 NOT NULL,
+	o_user_id int4 NOT NULL,
+	CONSTRAINT chat_session_pk PRIMARY KEY (id)
 );
 -- ddl-end --
-ALTER TABLE public.chat_group OWNER TO postgres;
+ALTER TABLE public.chat_session OWNER TO postgres;
+-- ddl-end --
+
+-- object: public.users_tags_learn | type: TABLE --
+-- DROP TABLE IF EXISTS public.users_tags_learn CASCADE;
+CREATE TABLE public.users_tags_learn (
+	user_id int4 NOT NULL,
+	tag_id int4 NOT NULL,
+	CONSTRAINT t_uq PRIMARY KEY (user_id,tag_id)
+);
+-- ddl-end --
+ALTER TABLE public.users_tags_learn OWNER TO postgres;
 -- ddl-end --
 
 -- object: verification_method_fk | type: CONSTRAINT --
@@ -136,15 +149,15 @@ ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: user_id_fk | type: CONSTRAINT --
--- ALTER TABLE public.users_tags DROP CONSTRAINT IF EXISTS user_id_fk CASCADE;
-ALTER TABLE public.users_tags ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id)
+-- ALTER TABLE public.users_tags_teach DROP CONSTRAINT IF EXISTS user_id_fk CASCADE;
+ALTER TABLE public.users_tags_teach ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id)
 REFERENCES public.users (id) MATCH SIMPLE
 ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
 -- object: tag_id_fk | type: CONSTRAINT --
--- ALTER TABLE public.users_tags DROP CONSTRAINT IF EXISTS tag_id_fk CASCADE;
-ALTER TABLE public.users_tags ADD CONSTRAINT tag_id_fk FOREIGN KEY (tag_id)
+-- ALTER TABLE public.users_tags_teach DROP CONSTRAINT IF EXISTS tag_id_fk CASCADE;
+ALTER TABLE public.users_tags_teach ADD CONSTRAINT tag_id_fk FOREIGN KEY (tag_id)
 REFERENCES public.tags (id) MATCH SIMPLE
 ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
@@ -163,18 +176,39 @@ REFERENCES public.roles (id) MATCH SIMPLE
 ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: group_id_fk | type: CONSTRAINT --
--- ALTER TABLE public.chat_message DROP CONSTRAINT IF EXISTS group_id_fk CASCADE;
-ALTER TABLE public.chat_message ADD CONSTRAINT group_id_fk FOREIGN KEY (chat_group_id)
-REFERENCES public.chat_group (id) MATCH SIMPLE
-ON DELETE CASCADE ON UPDATE CASCADE;
+-- object: chat_session_fk | type: CONSTRAINT --
+-- ALTER TABLE public.chat_message DROP CONSTRAINT IF EXISTS chat_session_fk CASCADE;
+ALTER TABLE public.chat_message ADD CONSTRAINT chat_session_fk FOREIGN KEY (chat_session_id)
+REFERENCES public.chat_session (id) MATCH SIMPLE
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: l_user_fk | type: CONSTRAINT --
+-- ALTER TABLE public.chat_session DROP CONSTRAINT IF EXISTS l_user_fk CASCADE;
+ALTER TABLE public.chat_session ADD CONSTRAINT l_user_fk FOREIGN KEY (l_user_id)
+REFERENCES public.users (id) MATCH SIMPLE
+ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ddl-end --
+
+-- object: o_user_id | type: CONSTRAINT --
+-- ALTER TABLE public.chat_session DROP CONSTRAINT IF EXISTS o_user_id CASCADE;
+ALTER TABLE public.chat_session ADD CONSTRAINT o_user_id FOREIGN KEY (o_user_id)
+REFERENCES public.users (id) MATCH SIMPLE
+ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 -- object: user_id_fk | type: CONSTRAINT --
--- ALTER TABLE public.chat_group DROP CONSTRAINT IF EXISTS user_id_fk CASCADE;
-ALTER TABLE public.chat_group ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id)
+-- ALTER TABLE public.users_tags_learn DROP CONSTRAINT IF EXISTS user_id_fk CASCADE;
+ALTER TABLE public.users_tags_learn ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id)
 REFERENCES public.users (id) MATCH SIMPLE
 ON DELETE CASCADE ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: tag_id_fk | type: CONSTRAINT --
+-- ALTER TABLE public.users_tags_learn DROP CONSTRAINT IF EXISTS tag_id_fk CASCADE;
+ALTER TABLE public.users_tags_learn ADD CONSTRAINT tag_id_fk FOREIGN KEY (tag_id)
+REFERENCES public.tags (id) MATCH SIMPLE
+ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 

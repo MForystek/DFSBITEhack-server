@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="9"
+<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="12"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
@@ -98,11 +98,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="first_class_data"/>
-	<position x="980" y="60"/>
+	<position x="940" y="0"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
-	<column name="tag" not-null="true">
+	<column name="name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
 	<column name="super_tag_id">
@@ -115,11 +115,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="tag_uq" type="uq-constr" table="public.tags">
-		<columns names="tag" ref-type="src-columns"/>
+		<columns names="name" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<table name="users_tags" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="users_tags_teach" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="connection-tables"/>
@@ -130,7 +130,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="tag_id" not-null="true">
 		<type name="int4" length="0"/>
 	</column>
-	<constraint name="users_tags_pk" type="pk-constr" table="public.users_tags">
+	<constraint name="users_tags_pk" type="pk-constr" table="public.users_tags_teach">
 		<columns names="user_id,tag_id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -185,11 +185,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="chat_message" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="chat_message" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="first_class_data"/>
-	<position x="1000" y="600"/>
+	<position x="1380" y="440"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -199,7 +199,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="time" not-null="true">
 		<type name="timestamp" length="0"/>
 	</column>
-	<column name="chat_group_id" not-null="true">
+	<column name="chat_session_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="to_user_id" not-null="true">
 		<type name="int4" length="0"/>
 	</column>
 	<constraint name="chat_pk" type="pk-constr" table="public.chat_message">
@@ -207,19 +210,36 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="chat_group" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+<table name="chat_session" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<tag name="connection-tables"/>
-	<position x="1000" y="320"/>
+	<position x="1040" y="540"/>
 	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="l_user_id" not-null="true">
 		<type name="int4" length="0"/>
 	</column>
+	<column name="o_user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="chat_session_pk" type="pk-constr" table="public.chat_session">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="users_tags_learn" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1020" y="300"/>
 	<column name="user_id" not-null="true">
 		<type name="int4" length="0"/>
 	</column>
-	<constraint name="chat_group_pk" type="pk-constr" table="public.chat_group">
-		<columns names="id,user_id" ref-type="src-columns"/>
+	<column name="tag_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="t_uq" type="pk-constr" table="public.users_tags_learn">
+		<columns names="user_id,tag_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -230,13 +250,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </constraint>
 
 <constraint name="user_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
-	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.users_tags">
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.users_tags_teach">
 	<columns names="user_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="tag_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
-	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.tags" table="public.users_tags">
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.tags" table="public.users_tags_teach">
 	<columns names="tag_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
@@ -253,25 +273,43 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="group_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
-	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.chat_group" table="public.chat_message">
-	<columns names="chat_group_id" ref-type="src-columns"/>
+<constraint name="chat_session_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.chat_session" table="public.chat_message">
+	<columns names="chat_session_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="l_user_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.users" table="public.chat_session">
+	<columns names="l_user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="o_user_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.users" table="public.chat_session">
+	<columns names="o_user_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="user_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
-	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.chat_group">
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.users_tags_learn">
 	<columns names="user_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="tag_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.tags" table="public.users_tags_learn">
+	<columns names="tag_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_users_tags_users" type="relfk" layers="0"
-	 src-table="public.users_tags"
+	 src-table="public.users_tags_teach"
 	 dst-table="public.users" reference-fk="user_id_fk"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_users_tags_tags" type="relfk" layers="0"
-	 src-table="public.users_tags"
+	 src-table="public.users_tags_teach"
 	 dst-table="public.tags" reference-fk="tag_id_fk"
 	 src-required="false" dst-required="true">
 	<label ref-type="name-label">
@@ -294,14 +332,29 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.roles" reference-fk="role_id_fk"
 	 src-required="false" dst-required="true"/>
 
-<relationship name="rel_chat_group_users" type="relfk" layers="0"
-	 src-table="public.chat_group"
+<relationship name="rel_chat_session_users" type="relfk" layers="0"
+	 src-table="public.chat_session"
+	 dst-table="public.users" reference-fk="l_user_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_chat_session_users1" type="relfk" layers="0"
+	 src-table="public.chat_session"
+	 dst-table="public.users" reference-fk="o_user_id"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_chat_message_chat_session" type="relfk" layers="0"
+	 src-table="public.chat_message"
+	 dst-table="public.chat_session" reference-fk="chat_session_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_user_tags_learn_users" type="relfk" layers="0"
+	 src-table="public.users_tags_learn"
 	 dst-table="public.users" reference-fk="user_id_fk"
 	 src-required="false" dst-required="true"/>
 
-<relationship name="rel_chat_message_chat_group" type="relfk" layers="0"
-	 src-table="public.chat_message"
-	 dst-table="public.chat_group" reference-fk="group_id_fk"
+<relationship name="rel_user_tags_learn_tags" type="relfk" layers="0"
+	 src-table="public.users_tags_learn"
+	 dst-table="public.tags" reference-fk="tag_id_fk"
 	 src-required="false" dst-required="true"/>
 
 </dbmodel>

@@ -1,4 +1,4 @@
-INSERT INTO tags(tag, level)
+INSERT INTO tags(name, level)
 VALUES
     ('mathematics', 1),
     ('languages', 1),

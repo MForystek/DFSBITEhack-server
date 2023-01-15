@@ -2,8 +2,6 @@ package com.dfs.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -45,11 +43,16 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-//    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "users_tags",
+    @JoinTable(name = "users_tags_learn",
                 joinColumns = @JoinColumn(name = "user_id"),
                 inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Tag> tags = new HashSet<>();
+    private Set<Tag> tags_learn = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_tags_teach",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags_teach = new HashSet<>();
 
     public User(String username, String email, String password, Timestamp creation_at) {
         this.username = username;
@@ -58,7 +61,18 @@ public class User {
         this.creation_at = creation_at;
     }
 
-    public void addTags(Collection<Tag> newTags) {
-        tags.addAll(newTags);
+    public void addTagsLearn(Collection<Tag> newTags) {
+        tags_learn.addAll(newTags);
     }
+    public void addTagsTeach(Collection<Tag> newTags) {
+        tags_teach.addAll(newTags);
+    }
+
+    public void deleteTagsLearn(Collection<Tag> tags) {
+        tags_learn.removeAll(tags);
+    }
+    public void deleteTagsTeach(Collection<Tag> tags) {
+        tags_teach.removeAll(tags);
+    }
+
 }
