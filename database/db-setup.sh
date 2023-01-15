@@ -5,12 +5,14 @@ ORG_ARGS="$*"
 SCRIPTS_DIR=$(dirname "$0")
 MAIN_SCRIPT_NAME=$(basename "$0")
 
-CREATE_TABLES_SQL="$SCRIPTS_DIR/create-tables.sql"
-DESIGN_PNG="$SCRIPTS_DIR/db-design.png"
+CREATE_TABLES_SQL="$SCRIPTS_DIR/exported/create-tables.sql"
+DESIGN_PNG="$SCRIPTS_DIR/exported/db-design.png"
 DESIGN_FILE="$SCRIPTS_DIR/design.dbm"
+mkdir -p "$SCRIPTS_DIR/exported"
 
 
 STORED_SQL_FUNCTIONALITIES_DIR="$SCRIPTS_DIR/stored-sql-functionalities/"
+PERSISTENCE_SQL_DIR="$SCRIPTS_DIR/persistence"
 
 usage () {
   cat << USAGE >&2
@@ -163,16 +165,22 @@ drop() {
 create_main() {
   psql -c "CREATE USER \"$DB_USERNAME\" WITH ENCRYPTED PASSWORD '$DB_PASSWORD';"
   psql -c "CREATE DATABASE \"$DB_NAME\" OWNER '$DB_USERNAME'"
-  (export PGPASSWORD=$DB_PASSWORD ;psql -U "$DB_USERNAME" -d "$DB_NAME" -a -f "$CREATE_TABLES_SQL")
+  (export PGPASSWORD=$DB_PASSWORD; psql -U "$DB_USERNAME" -d "$DB_NAME" -a -f "$CREATE_TABLES_SQL")
+}
+
+exec_all_sql() {
+  DIR="$1"
+  if [ -d "$DIR" ]; then
+      for p in $(find "$DIR" -name "*.sql") ; do
+        echo "use of $p"
+        psql -d "$DB_NAME" -a -f "$p"
+      done;
+    fi
 }
 
 create_other() {
-  if [ -d "$STORED_SQL_FUNCTIONALITIES_DIR" ]; then
-    for p in $(find "$STORED_SQL_FUNCTIONALITIES_DIR" -name "*.sql") ; do
-      echo "use of $p"
-      psql -d "$DB_NAME" -a -f "$p"
-    done;
-  fi
+  exec_all_sql "$STORED_SQL_FUNCTIONALITIES_DIR"
+  exec_all_sql "$PERSISTENCE_SQL_DIR"
 }
 
 terminate
@@ -187,8 +195,10 @@ if [ "$MAIN_SQL_MODIFY_DAEMON" = 'true' ]; then
   inotifywait --monitor --recursive --event modify "$SCRIPTS_DIR/exported/" |
     while read file_path file_event file_name; do
       echo ${file_path}${file_name} event: ${file_event};
-      SWP_DUMP="/postgres/run/database/cache/dumps/.dump.swp"
+      mkdir -p "$SCRIPTS_DIR/cache/dumps"
+      SWP_DUMP="$SCRIPTS_DIR/cache/dumps/.dump.swp"
       pg_dump --data-only --format=tar -d "$DB_NAME" --file="$SWP_DUMP";
+      terminate
       psql -c "DROP SCHEME public CASCADE;";
       psql -c "CREATE SCHEME public;";
       create_main
