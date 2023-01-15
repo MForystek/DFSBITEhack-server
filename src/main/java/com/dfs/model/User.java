@@ -1,5 +1,6 @@
 package com.dfs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,6 +32,8 @@ public class User {
     private Long id;
     private String username;
     private String email;
+
+    @JsonIgnore
     private String password;
     private Timestamp creation_at;
 
