@@ -20,6 +20,7 @@ import java.util.Date;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
+    private static final String PREFIX = "Bearer ";
     @Value("${kgex.app.jwtSecret}")
     private String jwtSecret;
 
@@ -39,7 +40,7 @@ public class JwtUtils {
     }
 
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token.replace(PREFIX, "")).getBody().getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {

@@ -28,8 +28,8 @@ CREATE TABLE public.users (
 	username text NOT NULL,
 	password text NOT NULL,
 	email text NOT NULL,
-	creation_at date,
-	verification_at date,
+	creation_at timestamp NOT NULL,
+	verification_at timestamp,
 	icon_path text,
 	verification_method_id int4,
 	CONSTRAINT user_pk PRIMARY KEY (id),
@@ -104,6 +104,30 @@ CREATE TABLE public.roles (
 ALTER TABLE public.roles OWNER TO postgres;
 -- ddl-end --
 
+-- object: public.chat_message | type: TABLE --
+-- DROP TABLE IF EXISTS public.chat_message CASCADE;
+CREATE TABLE public.chat_message (
+	id serial NOT NULL,
+	message text NOT NULL,
+	"time" timestamp NOT NULL,
+	chat_group_id int4 NOT NULL,
+	CONSTRAINT chat_pk PRIMARY KEY (id)
+);
+-- ddl-end --
+ALTER TABLE public.chat_message OWNER TO postgres;
+-- ddl-end --
+
+-- object: public.chat_group | type: TABLE --
+-- DROP TABLE IF EXISTS public.chat_group CASCADE;
+CREATE TABLE public.chat_group (
+	id int4 NOT NULL,
+	user_id int4 NOT NULL,
+	CONSTRAINT chat_group_pk PRIMARY KEY (id,user_id)
+);
+-- ddl-end --
+ALTER TABLE public.chat_group OWNER TO postgres;
+-- ddl-end --
+
 -- object: verification_method_fk | type: CONSTRAINT --
 -- ALTER TABLE public.users DROP CONSTRAINT IF EXISTS verification_method_fk CASCADE;
 ALTER TABLE public.users ADD CONSTRAINT verification_method_fk FOREIGN KEY (verification_method_id)
@@ -136,6 +160,20 @@ ON DELETE CASCADE ON UPDATE CASCADE;
 -- ALTER TABLE public.user_roles DROP CONSTRAINT IF EXISTS role_id_fk CASCADE;
 ALTER TABLE public.user_roles ADD CONSTRAINT role_id_fk FOREIGN KEY (role_id)
 REFERENCES public.roles (id) MATCH SIMPLE
+ON DELETE CASCADE ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: group_id_fk | type: CONSTRAINT --
+-- ALTER TABLE public.chat_message DROP CONSTRAINT IF EXISTS group_id_fk CASCADE;
+ALTER TABLE public.chat_message ADD CONSTRAINT group_id_fk FOREIGN KEY (chat_group_id)
+REFERENCES public.chat_group (id) MATCH SIMPLE
+ON DELETE CASCADE ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: user_id_fk | type: CONSTRAINT --
+-- ALTER TABLE public.chat_group DROP CONSTRAINT IF EXISTS user_id_fk CASCADE;
+ALTER TABLE public.chat_group ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id)
+REFERENCES public.users (id) MATCH SIMPLE
 ON DELETE CASCADE ON UPDATE CASCADE;
 -- ddl-end --
 

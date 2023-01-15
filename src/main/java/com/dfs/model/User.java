@@ -2,6 +2,8 @@ package com.dfs.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +15,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +34,8 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private Timestamp creation_at;
+
 
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -38,9 +44,21 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String email, String password) {
+    @ManyToMany(fetch = FetchType.LAZY)
+//    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(name = "users_tags",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags = new HashSet<>();
+
+    public User(String username, String email, String password, Timestamp creation_at) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.creation_at = creation_at;
+    }
+
+    public void addTags(Collection<Tag> newTags) {
+        tags.addAll(newTags);
     }
 }

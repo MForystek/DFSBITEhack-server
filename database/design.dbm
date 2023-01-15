@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="7"
+<dbmodel pgmodeler-ver="0.9.4" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="9"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
@@ -53,7 +53,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="first_class_data"/>
-	<position x="580" y="180"/>
+	<position x="580" y="320"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -66,11 +66,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="email" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="creation_at">
-		<type name="date" length="0"/>
+	<column name="creation_at" not-null="true">
+		<type name="timestamp" length="0"/>
 	</column>
 	<column name="verification_at">
-		<type name="date" length="0"/>
+		<type name="timestamp" length="0"/>
 		<comment><![CDATA[if null uesr is unverified]]></comment>
 	</column>
 	<column name="icon_path">
@@ -98,7 +98,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="first_class_data"/>
-	<position x="1020" y="540"/>
+	<position x="980" y="60"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -123,7 +123,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="connection-tables"/>
-	<position x="1000" y="200"/>
+	<position x="600" y="60"/>
 	<column name="user_id" not-null="true">
 		<type name="int4" length="0"/>
 	</column>
@@ -139,7 +139,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<tag name="dicts"/>
-	<position x="560" y="580"/>
+	<position x="560" y="700"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -154,7 +154,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="user_roles" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="180" y="160"/>
+	<position x="240" y="60"/>
 	<column name="user_id" not-null="true">
 		<type name="int4" length="0"/>
 	</column>
@@ -169,7 +169,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="roles" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="160" y="420"/>
+	<tag name="first_class_data"/>
+	<position x="240" y="360"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -181,6 +182,44 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 	<constraint name="roles_pk" type="pk-constr" table="public.roles">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="chat_message" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<tag name="first_class_data"/>
+	<position x="1000" y="600"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="message" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="time" not-null="true">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="chat_group_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="chat_pk" type="pk-constr" table="public.chat_message">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="chat_group" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<tag name="connection-tables"/>
+	<position x="1000" y="320"/>
+	<column name="id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<column name="user_id" not-null="true">
+		<type name="int4" length="0"/>
+	</column>
+	<constraint name="chat_group_pk" type="pk-constr" table="public.chat_group">
+		<columns names="id,user_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -214,6 +253,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="group_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.chat_group" table="public.chat_message">
+	<columns names="chat_group_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_id_fk" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="public.users" table="public.chat_group">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_users_tags_users" type="relfk" layers="0"
 	 src-table="public.users_tags"
 	 dst-table="public.users" reference-fk="user_id_fk"
@@ -241,6 +292,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="rel_user_roles_roles" type="relfk" layers="0"
 	 src-table="public.user_roles"
 	 dst-table="public.roles" reference-fk="role_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_chat_group_users" type="relfk" layers="0"
+	 src-table="public.chat_group"
+	 dst-table="public.users" reference-fk="user_id_fk"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_chat_message_chat_group" type="relfk" layers="0"
+	 src-table="public.chat_message"
+	 dst-table="public.chat_group" reference-fk="group_id_fk"
 	 src-required="false" dst-required="true"/>
 
 </dbmodel>
